@@ -565,9 +565,9 @@ Init <- function(sim) {
 
 ### changing th order so we can build the PresentDat ageRaster1985
   #4. Make the ecozone Raster (ecoRaster)"http://sis.agr.gc.ca/cansis/nsdb/ecostrat/zone/ecozone_shp.zip"
-  ecozone <- Cache(prepInputsEcozones, url = "http://sis.agr.gc.ca/cansis/nsdb/ecostrat/zone/ecozone_shp.zip",
+  ecozone <- Cache(CBMutils::prepInputsEcozones, url = "http://sis.agr.gc.ca/cansis/nsdb/ecostrat/zone/ecozone_shp.zip",
                    dPath = dPath,
-                   masterRaster = masterRaster)
+                   rasterToMatch = masterRaster)
 
   #5. Get just BC
   #provs <- getData("GADM", country = "CAN", level = 1)
