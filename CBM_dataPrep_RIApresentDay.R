@@ -858,7 +858,8 @@ Init <- function(sim) {
       x[sample(which(!theNAs),1)]
   }
   # maybe too small?
-  f9 <- focal(allDistRaster,
+  message("Deriving new age raster, step 1 of 3; this could take a while")
+  f9 <- Cache(focal, allDistRaster,
               w=matrix(1,nrow=3,ncol=3),
               fun = f3)
 
@@ -879,7 +880,8 @@ Init <- function(sim) {
   yrDist <- unique(countDist[allDist, on = "pixelIndex", nomatch = 0][,.(pixelIndex, year)])
   yrDistRaster[] <- NA
   yrDistRaster[yrDist$pixelIndex] <- yrDist$year
-  yrf9 <- focal(yrDistRaster,
+  message("Deriving new age raster, step 2 of 3; this could take a while")
+  yrf9 <- Cache(focal, yrDistRaster,
                 w=matrix(1,nrow=3,ncol=3),
                 fun = f3)
   set(ageDT, NULL, "yrf9", yrf9[])
@@ -888,7 +890,8 @@ Init <- function(sim) {
   eventDist <- unique(countDist[allDist, on = "pixelIndex", nomatch = 0][,.(pixelIndex, events)])
   eventRaster[] <- NA
   eventRaster[eventDist$pixelIndex] <- eventDist$events
-  eventf9 <- focal(eventRaster,
+  message("Deriving new age raster, step 3 of 3; this could take a while")
+  eventf9 <- Cache(focal, eventRaster,
                    w=matrix(1,nrow=3,ncol=3),
                    fun = f3)
   set(ageDT, NULL, "eventf9", eventf9[])
