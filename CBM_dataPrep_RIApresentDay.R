@@ -277,7 +277,12 @@ Init <- function(sim) {
   curveID <- sim$curveID
   sim$gcids <- factor(gcidsCreate(level3DT[, ..curveID]))
   set(level3DT, NULL, "gcids", sim$gcids)
-  sim$level3DT <- level3DT
+  ## debugging for Spinup()
+
+## TOOLS TO DEBUG C++ Spinup() fnct
+  # level3DT <- level3DT[ages>40,]
+  sim$level3DT <- level3DT[500:length(level3DT$ages),]
+  sim$gcids <- sim$level3DT$gcids
   ## End data.table for simulations-------------------------------------------
 
 
@@ -301,6 +306,8 @@ Init <- function(sim) {
 
   setorderv(sim$level3DT, "pixelGroup")
 
+
+
   ## Creating all the vectors for the spinup --------------------------------
   sim$ages <- sim$level3DT[, ages]
   sim$nStands <- length(sim$ages)
@@ -311,7 +318,7 @@ Init <- function(sim) {
   #sim$gcids <- as.integer(sim$level3DT[, ..curveID][[sim$curveID]])
   sim$delays <- rep.int(0, sim$nStands)
   sim$minRotations <- rep.int(10, sim$nStands)
-  sim$maxRotations <- rep.int(1000, sim$nStands)
+  sim$maxRotations <- rep.int(15, sim$nStands) ## TOOLS TO DEBUG C++ Spinup() fnct
   setkeyv(sim$level3DT, "spatial_unit_id")
   spinupParameters <- as.data.table(sim$cbmData@spinupParameters[, c(1, 2)])
   setkeyv(spinupParameters,"spatial_unit_id")
