@@ -543,7 +543,7 @@ Init <- function(sim) {
                        destinationPath = dPath)
   # This works for the fire return interval runs
   #forest inventory info. this makes a raster stack of the two main rasters, gcIDRaster and ageRaster
-  RIA_VRIstack <- Cache(prepInputsVRI,VRIurl = "https://drive.google.com/file/d/1LXSX8M46EnsTCM3wGhkiMgqWcqTubC12",
+  RIA_VRIstack <- Cache(prepInputsVRI,url = "https://drive.google.com/file/d/1LXSX8M46EnsTCM3wGhkiMgqWcqTubC12",
                         dPath = dPath,
                         rasterToMatch = RIArtm
   )
