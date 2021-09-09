@@ -118,7 +118,11 @@ defineModule(sim, list(
                   desc = "Vector of column names that together, uniquely define growth curve id"),
     createsOutput(
       objectName = "ages", objectClass = "numeric",
-      desc = "Ages of the stands from the inventory in 1990"
+      desc = "Ages of the stands from the inventory in 1985 with ages <=1 changes to 2 for the spinup"
+    ),
+    createsOutput(
+      objectName = "realAges", objectClass = "numeric",
+      desc = "Ages of the stands from the inventory in 1985 saved to replace the ages post spinup"
     ),
     createsOutput(
       objectName = "nStands", objectClass = "numeric",
@@ -279,30 +283,28 @@ Init <- function(sim) {
   set(level3DT, NULL, "gcids", sim$gcids)
   ## debugging for Spinup()
 
-## TOOLS TO DEBUG C++ Spinup() fnct
-  # level3DT <- level3DT[ages>40,]
-  sim$level3DT <- level3DT[500:length(level3DT$ages),]
-  sim$gcids <- sim$level3DT$gcids
   ## End data.table for simulations-------------------------------------------
 
 
   ## TODO: problem with ages<=1
   ##################################################### # SK example: can't seem
-  #to solve why growth curve id 52 (white birch, good # productivity) will not
-  #run with ages= c(0,1,2) it gets stuck in the spinup. Tried ages==1, # and
-  #ages==2. Maybe because the first few years of growth are 0 ? (to check) it #
-  #does not grow and it does not fill-up the soil pools. # Notes: the GAMs are
-  #fit on the cumulative curves of carbon/ha for three # pools. This is to make
-  #sure the curves go through 0...but maybe it would # work better for GAMs to
-  #be fit on the increments (?). # since all growth curves are for merchantible
-  #timber (with diameter limits), it is acceptable to start all increments at
-  #the level of year==3.
+  # in SK: to solve why growth curve id 52 (white birch, good # productivity) will not
+  #run with ages= c(0,1,2) it gets stuck in the spinup need to set ages to 3. Tried ages==1, and
+  #ages==2. Maybe because the first few years of growth are 0 ? (to check) it
+  #does not grow and it does not fill-up the soil pools.
   #work for this problem for most curves for now: this is from SK runs
   #sim$level3DT[ages==0 & growth_curve_component_id==52,ages:=3]
- ######################################
-  ##################### temp fix should
-
   #sim$level3DT[ages <= 1, ages := 3]
+  # in RIA: won't run for ages 0 or 1 with growth 0
+ ######################################
+  ## TOOLS TO DEBUG C++ Spinup() fnct
+  #level3DT <- level3DT[ages>0,]
+
+  sim$level3DT <- level3DT
+
+  sim$realAges <- sim$level3DT[, ages]
+  sim$level3DT[ages <= 1, ages := 2]
+  #sim$gcids <- sim$level3DT$gcids
 
   setorderv(sim$level3DT, "pixelGroup")
 
@@ -318,7 +320,7 @@ Init <- function(sim) {
   #sim$gcids <- as.integer(sim$level3DT[, ..curveID][[sim$curveID]])
   sim$delays <- rep.int(0, sim$nStands)
   sim$minRotations <- rep.int(10, sim$nStands)
-  sim$maxRotations <- rep.int(15, sim$nStands) ## TOOLS TO DEBUG C++ Spinup() fnct
+  sim$maxRotations <- rep.int(30, sim$nStands) ## TOOLS TO DEBUG C++ Spinup() fnct
   setkeyv(sim$level3DT, "spatial_unit_id")
   spinupParameters <- as.data.table(sim$cbmData@spinupParameters[, c(1, 2)])
   setkeyv(spinupParameters,"spatial_unit_id")
